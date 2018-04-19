@@ -14,7 +14,7 @@ describe('Test Login and Signup forms', () => {
   after('Clear database', () => mongoose.connection.dropDatabase());
   after('Disconnect mongoose', () => mongoose.disconnect());
 
-  it.only('should POST /users and fail required fields', () => {
+  it('should POST /users and fail due to missing password', () => {
     const { email } = mock.user();
     return chai
       .request(app)
@@ -22,10 +22,23 @@ describe('Test Login and Signup forms', () => {
       .send({ email })
       .then((response) => {
         response.status.should.equal(400);
+        response.body.error.should.contain('password');
       });
   });
 
-  it.only('should POST /users and succeed', () => {
+  it('should POST /users and fail due to empty email', () => {
+    const { password } = mock.user();
+    return chai
+      .request(app)
+      .post('/users')
+      .send({ email: '', password })
+      .then((response) => {
+        response.status.should.equal(400);
+        response.body.error.should.contain('email');
+      });
+  });
+
+  it('should POST /users and succeed', () => {
     const { email, password } = mock.user();
     return chai
       .request(app)
