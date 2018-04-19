@@ -36,6 +36,11 @@ UserSchema.methods.createToken = function createToken() {
   });
 };
 
+UserSchema.methods.toJSON = function serialize() {
+  /* eslint-disable-next-line no-underscore-dangle */
+  return { email: this.email, id: this._id };
+};
+
 const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

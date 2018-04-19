@@ -11,6 +11,7 @@ const requiredFields = fields => (req, res, next) => {
   }
 };
 
+const jwtAuth = passport.authenticate('jwt', { session: false });
 const localAuth = passport.authenticate('local', { session: false });
 
-module.exports = { requiredFields, localAuth };
+module.exports = { jwtAuth, localAuth, requiredFields };
