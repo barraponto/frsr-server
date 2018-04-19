@@ -1,3 +1,5 @@
+const passport = require('../passport');
+
 const requiredFields = fields => (req, res, next) => {
   const missing = fields.filter(field => !(field in req.body) || req.body[field] === '');
   if (missing.length) {
@@ -9,4 +11,6 @@ const requiredFields = fields => (req, res, next) => {
   }
 };
 
-module.exports = { requiredFields };
+const localAuth = passport.authenticate('local', { session: false });
+
+module.exports = { requiredFields, localAuth };

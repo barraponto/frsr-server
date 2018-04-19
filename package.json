@@ -4,15 +4,19 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "mongodb": "mongod --dbpath ./data --nojournal"
+    "mongodb": "mongod --dbpath ./data --nojournal",
+    "test": "mocha test/"
   },
   "dependencies": {
     "bcrypt": "^2.0.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.16.0",
+    "jsonwebtoken": "^8.2.1",
     "mongoose": "^5.0.15",
-    "morgan": "~1.9.0"
+    "morgan": "~1.9.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",

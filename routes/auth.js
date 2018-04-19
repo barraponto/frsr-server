@@ -1,10 +1,9 @@
 const express = require('express');
+const { localAuth, requiredFields } = require('./utils');
 
 const router = express.Router();
 
-/* GET home page. */
-router.get('/', (req, res) => {
-  res.render('index', { title: 'Express' });
-});
+router.post('/login', requiredFields(['email', 'password']), localAuth, (req, res) =>
+  res.json({ authToken: req.user.createToken() }));
 
 module.exports = router;

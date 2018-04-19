@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const config = require('../config');
+const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const { JWT_EXPIRY, JWT_SECRET, SALT_WORK_FACTOR } = require('../config');
 
 const UserSchema = mongoose.Schema({
   email: { type: String, required: true, index: { unique: true } },
@@ -11,7 +12,7 @@ UserSchema.pre('save', function hashPassword(next) {
   const user = this;
   if (user.isModified('password')) {
     bcrypt
-      .genSalt(config.SALT_WORK_FACTOR)
+      .genSalt(SALT_WORK_FACTOR)
       .then(salt => bcrypt.hash(user.password, salt))
       .then((hash) => {
         user.password = hash;
@@ -25,6 +26,14 @@ UserSchema.pre('save', function hashPassword(next) {
 
 UserSchema.methods.checkPassword = function checkPassword(password) {
   return bcrypt.compare(password, this.password);
+};
+
+UserSchema.methods.createToken = function createToken() {
+  return jwt.sign({ user: this.id }, JWT_SECRET, {
+    subject: this.email,
+    expiresIn: JWT_EXPIRY,
+    algorithm: 'HS256',
+  });
 };
 
 const User = mongoose.model('User', UserSchema);
