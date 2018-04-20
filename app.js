@@ -3,6 +3,7 @@ const logger = require('morgan');
 const passport = require('./passport');
 const { notFound, genericError } = require('./error');
 const authRouter = require('./routes/auth');
+const pairsRouter = require('./routes/pairs');
 const usersRouter = require('./routes/users');
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(passport.initialize());
 
 app.use('/auth', authRouter);
+app.use('/pairs', pairsRouter);
 app.use('/users', usersRouter);
 
 app.use(notFound);
