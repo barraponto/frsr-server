@@ -5,4 +5,9 @@ const user = () => ({
   password: faker.internet.password(),
 });
 
-module.exports = { user };
+const pair = () => ({
+  native: faker.random.word(),
+  foreign: faker.lorem.word(),
+});
+
+module.exports = { pair, user };
