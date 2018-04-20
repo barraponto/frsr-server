@@ -1,16 +1,18 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const app = require('../app');
 const mongoose = require('mongoose');
-const User = require('../models/user');
-const config = require('../config');
+
+const app = require('../app');
 const mock = require('./mock');
+const User = require('../models/user');
+
+const { MONGODB_URL } = require('../config');
 
 chai.should();
 chai.use(chaiHttp);
 
 describe('Test Login and Signup forms', () => {
-  before('Connect mongoose', () => mongoose.connect(config.MONGODB_URL));
+  before('Connect mongoose', () => mongoose.connect(MONGODB_URL));
   beforeEach('Clear database', () => mongoose.connection.dropDatabase());
   after('Clear database', () => mongoose.connection.dropDatabase());
   after('Disconnect mongoose', () => mongoose.disconnect());
@@ -47,6 +49,9 @@ describe('Test Login and Signup forms', () => {
       .send({ email, password })
       .then((response) => {
         response.status.should.equal(201);
+        response.body.should.have.keys(['id', 'email']);
+        response.body.should.not.have.keys(['_id', '__v', 'password']);
+        response.body.email.should.equal(email);
       });
   });
 
@@ -86,14 +91,19 @@ describe('Test Login and Signup forms', () => {
     const userData = mock.user();
     return User.create(userData)
       .then(user =>
-        chai
-          .request(app)
-          .get('/users')
-          .set('Authorization', `Bearer ${user.createToken()}`))
-      .then((response) => {
+        Promise.all([
+          user,
+          chai
+            .request(app)
+            .get('/users')
+            .set('Authorization', `Bearer ${user.createToken()}`),
+        ]))
+      .then(([user, response]) => {
         response.status.should.equal(200);
         response.body.should.have.keys(['id', 'email']);
         response.body.should.not.have.keys(['_id', '__v', 'password']);
+        response.body.id.should.equal(user.id);
+        response.body.email.should.equal(user.email);
       });
   });
 });
