@@ -1,10 +1,12 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const mongoose = require('mongoose');
+
 const app = require('../app');
-const User = require('../models/user');
-const { MONGODB_URL } = require('../config');
 const mock = require('./mock');
+const User = require('../models/user');
+
+const { MONGODB_URL } = require('../config');
 
 chai.should();
 chai.use(chaiHttp);
